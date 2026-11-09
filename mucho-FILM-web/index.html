@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>mucho FILM — Edición Roja</title>
+
+  <!-- Tema guardado (antes de pintar, para evitar parpadeos) -->
+  <script>
+    (function () {
+      var t = 'dark';
+      try { t = localStorage.getItem('muchofilm.theme') || 'dark'; } catch (e) {}
+      document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    })();
+  </script>
+
+  <!-- PWA & iPadOS Standalone App Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="mucho FILM">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#131316">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ===================================================================
+       ICONOS (sprite SVG reutilizable: <svg class="i"><use href="#i-..."/></svg>)
+       =================================================================== -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <defs>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+      <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 2v20"/><path d="M3 15l5-5 4 4" opacity=".55"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+      <symbol id="i-tablet" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+      <symbol id="i-carousel" viewBox="0 0 24 24"><rect x="2" y="5" width="6" height="14" rx="1.5"/><rect x="9" y="5" width="6" height="14" rx="1.5"/><rect x="16" y="5" width="6" height="14" rx="1.5"/></symbol>
+      <symbol id="i-image-plus" viewBox="0 0 24 24"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><path d="M16 5h6M19 2v6"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></symbol>
+      <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M3 12h18M3 16.5h4M17 7.5h4M17 16.5h4"/></symbol>
+      <symbol id="i-motion" viewBox="0 0 24 24"><path d="M3 8h9M2 12h7M3 16h9"/><circle cx="17" cy="12" r="4"/></symbol>
+      <symbol id="i-wand" viewBox="0 0 24 24"><path d="m15 4 1-2 1 2 2 1-2 1-1 2-1-2-2-1z"/><path d="M19 13l.7-1.3L21 11l-1.3-.7L19 9l-.7 1.3L17 11l1.3.7z"/><path d="M3 21 14 10"/><path d="m12 8 4 4"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+      <symbol id="i-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+      <symbol id="i-rotate-cw" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+      <symbol id="i-flip-h" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M8 7 3 12l5 5V7z"/><path d="M16 7l5 5-5 5V7z"/></symbol>
+      <symbol id="i-flip-v" viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M7 8l5-5 5 5H7z"/><path d="M7 16l5 5 5-5H7z"/></symbol>
+      <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v16M4 7l3-3 3 3"/><path d="M17 20V4M14 17l3 3 3-3"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+      <symbol id="i-paste" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+      <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></symbol>
+      <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-bring-front" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1"/></symbol>
+      <symbol id="i-send-back" viewBox="0 0 24 24"><rect x="3" y="3" width="13" height="13" rx="2"/><path d="M20 8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1" stroke-dasharray="2 2.5"/></symbol>
+      <symbol id="i-magnet" viewBox="0 0 24 24"><path d="M6 15V7a6 6 0 0 1 12 0v8a6 6 0 0 1-12 0z" /><path d="M6 9h4M14 9h4"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4M5 17v4M3 19h4"/></symbol>
+      <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-frame" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1"/></symbol>
+      <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0z"/><path d="m14.5 12.5 2-2M11.5 9.5l2-2M8.5 6.5l2-2M17.5 15.5l2-2"/></symbol>
+      <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="i-none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app-shell">
+    <!-- =================================================================
+         1. BARRA SUPERIOR
+         ================================================================= -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand-mark" title="mucho FILM — Edición Roja">
+          <div class="mucho-film-logo" aria-label="mucho FILM">
+            <span class="logo-mucho">mucho</span>
+            <span class="logo-film">FILM</span>
+          </div>
+          <span class="safelight-dot" aria-hidden="true"></span>
+        </div>
+        <div class="topbar-divider" aria-hidden="true"></div>
+        <div class="doc-title-box">
+          <span id="docFileName" class="doc-file-name">Sin foto</span>
+          <span id="docBadge" class="doc-badge-pill" style="display: none;">RAW</span>
+        </div>
+      </div>
+
+      <div class="topbar-center">
+        <div class="history-control-bar" role="group" aria-label="Deshacer y rehacer">
+          <button id="btnTopUndo" class="icon-btn" title="Deshacer (⌘Z)" aria-label="Deshacer" disabled>
+            <svg class="i"><use href="#i-undo"/></svg>
+          </button>
+          <button id="btnTopRedo" class="icon-btn" title="Rehacer (⇧⌘Z)" aria-label="Rehacer" disabled>
+            <svg class="i"><use href="#i-redo"/></svg>
+          </button>
+        </div>
+
+        <div class="zoom-control-bar" role="group" aria-label="Zoom">
+          <button id="btnZoomMinus" class="icon-btn" title="Alejar (⌘−)" aria-label="Alejar"><svg class="i"><use href="#i-minus"/></svg></button>
+          <input type="range" id="topZoomSlider" class="zoom-slider" min="10" max="400" step="1" value="100" aria-label="Nivel de zoom" hidden>
+          <button id="zoomReadout" class="zoom-readout" title="Ajustar a la pantalla (Z)">100%</button>
+          <button id="btnZoomPlus" class="icon-btn" title="Acercar (⌘+)" aria-label="Acercar"><svg class="i"><use href="#i-plus"/></svg></button>
+          <span class="mini-divider" aria-hidden="true"></span>
+          <button id="btnFitView" class="icon-btn" title="Ajustar a la pantalla (Z)" aria-label="Ajustar a la pantalla"><svg class="i"><use href="#i-fit"/></svg></button>
+        </div>
+
+        <button id="btnCompareSplit" class="icon-btn icon-btn-labeled" title="Comparar antes / después (Y) · Mantén pulsada \ para ver el original" aria-pressed="false">
+          <svg class="i"><use href="#i-compare"/></svg>
+          <span>Comparar</span>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <button id="btnThemeToggle" class="icon-btn" title="Cambiar a tema claro" aria-label="Cambiar tema">
+          <svg class="i theme-icon-sun"><use href="#i-sun"/></svg>
+          <svg class="i theme-icon-moon"><use href="#i-moon"/></svg>
+        </button>
+        <button id="btnShortcuts" class="icon-btn" title="Atajos de teclado (?)" aria-label="Atajos de teclado">
+          <svg class="i"><use href="#i-keyboard"/></svg>
+        </button>
+        <button id="btnOpenIpadModal" class="icon-btn" title="Abrir en el iPad (código QR)" aria-label="Abrir en el iPad">
+          <svg class="i"><use href="#i-tablet"/></svg>
+        </button>
+        <span class="topbar-divider" aria-hidden="true"></span>
+        <button id="btnToggleCarousel" class="btn-top-icon" title="Modo carrusel para Instagram (1:1, 4:5, 3:4)">
+          <svg class="i"><use href="#i-carousel"/></svg>
+          <span id="labelTopCarousel">Carrusel</span>
+        </button>
+        <button id="btnOpenNew" class="btn-top-icon" title="Añadir fotos (⌘O)">
+          <svg class="i"><use href="#i-image-plus"/></svg>
+          <span>Abrir</span>
+        </button>
+        <button id="btnOpenExportModal" class="btn-export-pill" title="Exportar (⌘E)">
+          <svg class="i"><use href="#i-download"/></svg>
+          <span id="labelExportBtn">Exportar</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =================================================================
+         2. ÁREA DE TRABAJO
+         ================================================================= -->
+    <main class="workspace-container">
+      <section id="canvasViewport" class="canvas-viewport">
+        <!-- Pantalla inicial -->
+        <div id="dropzoneOverlay" class="dropzone-overlay">
+          <div class="dropzone-card">
+            <div class="dropzone-icon">
+              <svg class="i"><use href="#i-image-plus"/></svg>
+            </div>
+            <h2 class="dropzone-title">Revela tu próxima foto</h2>
+            <p class="dropzone-subtitle">Arrastra aquí una o varias fotos o elige archivos de tu equipo.</p>
+            <span class="btn-primary dropzone-cta">
+              <svg class="i"><use href="#i-image"/></svg>
+              Elegir fotos
+            </span>
+            <div class="dropzone-hints">
+              <span><kbd>⌘</kbd><kbd>V</kbd> pegar del portapapeles</span>
+              <span><kbd>?</kbd> atajos de teclado</span>
+            </div>
+            <div class="dropzone-badge-list">
+              <span class="dropzone-badge">JPEG</span>
+              <span class="dropzone-badge">PNG</span>
+              <span class="dropzone-badge">TIFF 16 bits</span>
+              <span class="dropzone-badge">WebP</span>
+              <span class="dropzone-badge">RAW / DNG</span>
+            </div>
+          </div>
+        </div>
+
+        <input type="file" id="filePicker" style="display: none;" multiple accept="image/*,.tif,.tiff,.dng,.raw,.cr2,.cr3,.nef,.arw,.raf">
+
+        <!-- Lienzo -->
+        <canvas id="glCanvas" class="gl-canvas"></canvas>
+
+        <!-- Comparador antes / después -->
+        <div id="compareSplitter" class="compare-splitter" aria-hidden="true">
+          <span class="compare-tag compare-tag-before">Antes</span>
+          <span class="compare-tag compare-tag-after">Después</span>
+          <div class="compare-handle" title="Arrastra para comparar">
+            <svg class="i"><use href="#i-chevron-left"/></svg><svg class="i"><use href="#i-chevron-right"/></svg>
+          </div>
+        </div>
+        <div id="beforeBadge" class="canvas-badge">Original</div>
+
+        <!-- Cuadrícula de enderezado -->
+        <div id="straightenGrid" class="straighten-grid"></div>
+
+        <!-- Recorte interactivo -->
+        <div id="cropOverlay" class="crop-overlay">
+          <div class="crop-grid-line crop-grid-h1"></div>
+          <div class="crop-grid-line crop-grid-h2"></div>
+          <div class="crop-grid-line crop-grid-v1"></div>
+          <div class="crop-grid-line crop-grid-v2"></div>
+          <div class="crop-handle crop-handle-tl" data-handle="tl"></div>
+          <div class="crop-handle crop-handle-tr" data-handle="tr"></div>
+          <div class="crop-handle crop-handle-bl" data-handle="bl"></div>
+          <div class="crop-handle crop-handle-br" data-handle="br"></div>
+          <div class="crop-handle crop-handle-tc" data-handle="tc"></div>
+          <div class="crop-handle crop-handle-bc" data-handle="bc"></div>
+          <div class="crop-handle crop-handle-ml" data-handle="ml"></div>
+          <div class="crop-handle crop-handle-mr" data-handle="mr"></div>
+        </div>
+
+        <!-- Ancla de sujeto nítido -->
+        <div id="anchorGizmo" class="anchor-gizmo"></div>
+
+        <!-- Aviso de alineación magnética -->
+        <div id="magneticHudBanner" class="magnetic-hud-banner" style="display: none;">
+          <svg class="i"><use href="#i-magnet"/></svg>
+          <span id="magneticHudText">Alineado</span>
+        </div>
+
+        <!-- Barra contextual del carrusel (superior) -->
+        <div id="canvaFloatingToolbar" class="canva-floating-toolbar" style="display: none;">
+          <button id="btnCanvaUndo" class="canva-toolbar-btn icon-only" title="Deshacer (⌘Z)" aria-label="Deshacer" disabled><svg class="i"><use href="#i-undo"/></svg></button>
+          <button id="btnCanvaRedo" class="canva-toolbar-btn icon-only" title="Rehacer (⇧⌘Z)" aria-label="Rehacer" disabled><svg class="i"><use href="#i-redo"/></svg></button>
+          <div class="canva-toolbar-sep"></div>
+          <div class="canva-toolbar-badge" id="canvaToolbarActiveLabel">Marco seleccionado</div>
+          <div class="canva-toolbar-sep"></div>
+          <button id="btnCanvaToolbarReplace" class="canva-toolbar-btn" title="Cargar o reemplazar la foto de este marco">
+            <svg class="i"><use href="#i-image-plus"/></svg><span>Cambiar foto</span>
+          </button>
+          <button id="btnCanvaToolbarCrop" class="canva-toolbar-btn" title="Reencuadrar dentro del marco (doble clic)">
+            <svg class="i"><use href="#i-crop"/></svg><span id="labelCanvaToolbarCrop">Encuadrar</span>
+          </button>
+          <button id="btnCanvaToolbarFitSlot" class="canva-toolbar-btn" title="Encajar en el hueco de plantilla más cercano">
+            <svg class="i"><use href="#i-fit"/></svg><span>Encajar</span>
+          </button>
+          <div class="canva-toolbar-sep"></div>
+          <button id="btnCanvaToolbarFront" class="canva-toolbar-btn icon-only" title="Traer al frente" aria-label="Traer al frente"><svg class="i"><use href="#i-bring-front"/></svg></button>
+          <button id="btnCanvaToolbarBack" class="canva-toolbar-btn icon-only" title="Enviar al fondo" aria-label="Enviar al fondo"><svg class="i"><use href="#i-send-back"/></svg></button>
+          <button id="btnCanvaToolbarRot" class="canva-toolbar-btn icon-only" title="Girar 90°" aria-label="Girar 90°"><svg class="i"><use href="#i-rotate-cw"/></svg></button>
+          <div class="canva-toolbar-sep"></div>
+          <button id="btnCanvaToolbarDelete" class="canva-toolbar-btn danger" title="Vaciar el marco o quitar la foto">
+            <svg class="i"><use href="#i-trash"/></svg><span>Vaciar</span>
+          </button>
+        </div>
+
+        <!-- Navegador de diapositivas (inferior) -->
+        <div id="canvaSlideNavBar" class="canva-slide-navbar" style="display: none;">
+          <button id="btnSlideNavFull" class="slide-nav-overview-btn active" title="Ver el carrusel completo (Z)">
+            <svg class="i"><use href="#i-carousel"/></svg><span>Todo</span>
+          </button>
+          <div class="canva-toolbar-sep"></div>
+          <button id="btnSlideNavPrev" class="slide-nav-arrow" title="Diapositiva anterior" aria-label="Diapositiva anterior"><svg class="i"><use href="#i-chevron-left"/></svg></button>
+          <div id="canvaSlideNavPills" class="slide-nav-pills-wrap"></div>
+          <button id="btnSlideNavNext" class="slide-nav-arrow" title="Diapositiva siguiente" aria-label="Diapositiva siguiente"><svg class="i"><use href="#i-chevron-right"/></svg></button>
+          <div class="canva-toolbar-sep"></div>
+          <button id="btnCanvaQuickAutoFill" class="slide-nav-autofill-btn" title="Rellenar los huecos de la plantilla con tus fotos">
+            <svg class="i"><use href="#i-sparkles"/></svg><span>Auto-rellenar</span>
+          </button>
+        </div>
+
+        <!-- Carrete de fotos del proyecto -->
+        <div id="bottomFilmstripBar" class="bottom-filmstrip-bar" style="display: none;">
+          <div class="filmstrip-label-pill" id="filmstripCountBadge">1 foto</div>
+          <div class="filmstrip-scroll-wrap" id="filmstripScrollWrap"></div>
+          <button id="btnFilmstripAdd" class="filmstrip-add-btn" title="Añadir más fotos (⌘O)" aria-label="Añadir fotos">
+            <svg class="i"><use href="#i-plus"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Telón para cerrar el panel en móvil -->
+      <div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop"></div>
+
+      <!-- =================================================================
+           3. PANEL DE AJUSTES (DERECHA / HOJA INFERIOR EN MÓVIL)
+           ================================================================= -->
+      <aside id="integratedSidebar" class="integrated-sidebar">
+        <div class="mobile-sheet-handle-wrap" id="mobileSheetHandleWrap">
+          <div class="mobile-sheet-handle"></div>
+        </div>
+
+        <div class="sidebar-header">
+          <div class="sidebar-title">Ajustes</div>
+          <button id="btnCloseMobileSidebar" class="btn-close-mobile-sheet" title="Cerrar" aria-label="Cerrar panel">
+            <svg class="i"><use href="#i-x"/></svg>
+          </button>
+        </div>
+
+        <!-- Histograma e información -->
+        <div class="histogram-panel" id="histogramPanel">
+          <canvas id="histogramCanvas" class="histogram-canvas" aria-label="Histograma"></canvas>
+          <div class="histogram-meta">
+            <span class="histo-rgb" title="Valor RGB bajo el cursor">
+              <span class="ch-r">R</span> <b id="infoR">—</b>
+              <span class="ch-g">G</span> <b id="infoG">—</b>
+              <span class="ch-b">B</span> <b id="infoB">—</b>
+            </span>
+            <span id="infoResolutionFull" class="histo-res">—</span>
+          </div>
+          <div class="sr-only" aria-hidden="true">
+            <span id="infoCursorX"></span><span id="infoCursorY"></span>
+            <span id="infoWidth"></span><span id="infoHeight"></span><span id="infoAngle"></span>
+          </div>
+        </div>
+
+        <!-- Pestañas -->
+        <nav class="sidebar-tabs" role="tablist" aria-label="Secciones de ajustes">
+          <button class="sidebar-tab active" role="tab" data-tab="develop" title="Revelar (1)">
+            <svg class="i"><use href="#i-sliders"/></svg><span>Revelar</span>
+          </button>
+          <button class="sidebar-tab" role="tab" data-tab="crop" title="Recorte (2 · C)">
+            <svg class="i"><use href="#i-crop"/></svg><span>Recorte</span>
+          </button>
+          <button class="sidebar-tab" role="tab" data-tab="film" title="Película (3)">
+            <svg class="i"><use href="#i-film"/></svg><span>Película</span>
+          </button>
+          <button class="sidebar-tab" role="tab" data-tab="motion" title="Movimiento (4)">
+            <svg class="i"><use href="#i-motion"/></svg><span>Movimiento</span>
+          </button>
+          <button class="sidebar-tab" role="tab" data-tab="carousel" title="Carrusel (5)">
+            <svg class="i"><use href="#i-carousel"/></svg><span>Carrusel</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-body">
+          <!-- ============================ REVELAR ============================ -->
+          <div class="tab-panel active" data-panel="develop">
+            <button id="btnAutoEnhance" class="btn-auto-enhance" title="Optimización tonal automática">
+              <svg class="i"><use href="#i-wand"/></svg>
+              <span>Mejorar automáticamente</span>
+            </button>
+
+            <!-- Perfiles de película -->
+            <div id="sectionFilmProfilesCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Perfiles de película</div>
+              </div>
+              <div class="film-profiles-grid">
+                <button class="film-profile-card" data-profile="none" title="Sin perfil: colores originales de la foto">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Original</span>
+                </button>
+                <button class="film-profile-card" data-profile="portra400" title="Kodak Portra 400 · Piel sedosa dorada, negros mate y altas luces cremosas">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Portra 400</span>
+                </button>
+                <button class="film-profile-card" data-profile="gold200" title="Kodak Gold 200 · Nostalgia dorada, tonos cálidos y sol de verano">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Gold 200</span>
+                </button>
+                <button class="film-profile-card" data-profile="superia400" title="Fuji Superia X-Tra 400 · Look urbano frío, verdes esmeralda y sombras oliva">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Superia 400</span>
+                </button>
+                <button class="film-profile-card" data-profile="trix400" title="Kodak Tri-X 400 · Blanco y negro de fotoperiodismo, alto contraste y grano áspero">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Tri-X 400</span>
+                </button>
+                <button class="film-profile-card" data-profile="acros100" title="Fuji Neopan Acros 100 · Blanco y negro elegante, grano ultrafino">
+                  <canvas class="profile-thumb" width="128" height="128"></canvas>
+                  <span class="film-profile-name">Acros 100</span>
+                </button>
+              </div>
+
+              <!-- Estilos guardados por el usuario -->
+              <div class="user-styles">
+                <div class="user-styles-head">
+                  <span class="control-subheading">Mis estilos</span>
+                  <button id="btnSaveStyle" class="link-btn" title="Guardar los ajustes actuales como estilo reutilizable">
+                    <svg class="i"><use href="#i-plus"/></svg>Guardar actual
+                  </button>
+                </div>
+                <form id="saveStyleForm" class="inline-form" hidden>
+                  <input type="text" id="saveStyleName" class="text-input" placeholder="Nombre del estilo" maxlength="32" autocomplete="off">
+                  <button type="submit" class="btn-subtool btn-accent">Guardar</button>
+                  <button type="button" id="btnCancelStyle" class="btn-subtool">Cancelar</button>
+                </form>
+                <div id="userStylesList" class="chip-list">
+                  <span class="empty-hint">Guarda tu combinación de ajustes favorita para aplicarla a otras fotos con un clic.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ajustes básicos -->
+            <div id="sectionBasicsCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Ajustes básicos</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="basics" title="Restablecer esta sección" aria-label="Restablecer ajustes básicos"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar">
+                    <input type="checkbox" id="switchBasics" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="control-group-label">Balance de blancos</div>
+              <div class="slider-control-row">
+                <span class="slider-label">Temperatura</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderTemperature" class="macos-slider track-temp" min="-100" max="100" step="1" value="0"></div>
+                <span id="valTemperature" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Matiz</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderTint" class="macos-slider track-tint" min="-100" max="100" step="1" value="0"></div>
+                <span id="valTint" class="slider-value-readout">0</span>
+              </div>
+
+              <div class="control-group-label">Luz</div>
+              <div class="slider-control-row">
+                <span class="slider-label">Exposición</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderExposure" class="macos-slider" min="-3" max="3" step="0.05" value="0"></div>
+                <span id="valExposure" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Contraste</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderContrast" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valContrast" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Altas luces</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderHighlights" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valHighlights" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Sombras</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderShadows" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valShadows" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Blancos</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderWhites" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valWhites" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Negros</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderBlacks" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valBlacks" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Brillo</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderBrightness" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valBrightness" class="slider-value-readout">0</span>
+              </div>
+
+              <div class="control-group-label">Color</div>
+              <div class="slider-control-row">
+                <span class="slider-label">Intensidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderVibrance" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valVibrance" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Saturación</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderSaturation" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valSaturation" class="slider-value-readout">0</span>
+              </div>
+
+              <div class="control-group-label">Detalle</div>
+              <div class="slider-control-row">
+                <span class="slider-label">Claridad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderClarity" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valClarity" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Nitidez</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderSharpness" class="macos-slider" min="0" max="100" step="1" value="0"></div>
+                <span id="valSharpness" class="slider-value-readout">0</span>
+              </div>
+              <p class="panel-hint">Doble clic en un control lo devuelve a su valor inicial · Clic en el número para escribirlo.</p>
+            </div>
+          </div>
+
+          <!-- ============================ RECORTE ============================ -->
+          <div class="tab-panel" data-panel="crop">
+            <div id="sectionCropCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Recorte y enderezado</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="crop" title="Restablecer recorte y giro" aria-label="Restablecer recorte"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Mostrar el marco de recorte (C)">
+                    <input type="checkbox" id="switchCropMode">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="slider-control-row">
+                <span class="slider-label">Enderezar</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderStraighten" class="macos-slider" min="-45" max="45" step="0.1" value="0"></div>
+                <span id="valStraighten" class="slider-value-readout">0.0°</span>
+              </div>
+
+              <div class="control-group-label">Proporción</div>
+              <div class="grid-ratio-buttons">
+                <button class="btn-subtool active" data-ratio="free">Libre</button>
+                <button class="btn-subtool" data-ratio="orig">Original</button>
+                <button class="btn-subtool" data-ratio="1:1">1:1</button>
+                <button class="btn-subtool" data-ratio="4:5">4:5</button>
+                <button class="btn-subtool" data-ratio="3:2">3:2</button>
+                <button class="btn-subtool" data-ratio="16:9">16:9</button>
+                <button class="btn-subtool" data-ratio="9:16">9:16</button>
+                <button id="btnFlipRatio" class="btn-subtool" title="Invertir orientación del recorte" aria-label="Invertir orientación"><svg class="i"><use href="#i-swap"/></svg></button>
+              </div>
+
+              <div class="control-group-label">Girar y voltear</div>
+              <div class="grid-ratio-buttons">
+                <button id="btnRotateCCW" class="btn-subtool" title="Girar 90° a la izquierda"><svg class="i"><use href="#i-rotate-ccw"/></svg>90°</button>
+                <button id="btnRotateCW" class="btn-subtool" title="Girar 90° a la derecha"><svg class="i"><use href="#i-rotate-cw"/></svg>90°</button>
+                <button id="btnFlipH" class="btn-subtool" title="Voltear horizontal"><svg class="i"><use href="#i-flip-h"/></svg></button>
+                <button id="btnFlipV" class="btn-subtool" title="Voltear vertical"><svg class="i"><use href="#i-flip-v"/></svg></button>
+              </div>
+              <p class="panel-hint">Arrastra las esquinas del marco sobre la foto. <kbd>Intro</kbd> confirma, <kbd>Esc</kbd> sale.</p>
+            </div>
+          </div>
+
+          <!-- ============================ PELÍCULA ============================ -->
+          <div class="tab-panel" data-panel="film">
+            <!-- Grano -->
+            <div id="sectionGrainCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Grano</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="grain" title="Restablecer grano" aria-label="Restablecer grano"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar grano">
+                    <input type="checkbox" id="switchGrain" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Cantidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderGrainAmount" class="macos-slider" min="0" max="100" step="1" value="0"></div>
+                <span id="valGrainAmount" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Tamaño</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderGrainSize" class="macos-slider" min="0" max="100" step="1" value="35"></div>
+                <span id="valGrainSize" class="slider-value-readout">35</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Rugosidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderGrainRoughness" class="macos-slider" min="0" max="100" step="1" value="50"></div>
+                <span id="valGrainRoughness" class="slider-value-readout">50</span>
+              </div>
+            </div>
+
+            <!-- Light leaks -->
+            <div id="sectionLightLeakCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Fugas de luz</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="leak" title="Quitar fuga de luz" aria-label="Restablecer fugas de luz"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar">
+                    <input type="checkbox" id="switchLightLeak">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="swatch-grid">
+                <button class="swatch swatch-none active" data-leak="none" title="Sin fuga de luz"><span class="swatch-img"><svg class="i"><use href="#i-none"/></svg></span></button>
+                <button class="swatch" data-leak="leak_01" title="Fuga 01"><span class="swatch-img"></span><span class="swatch-num">01</span></button>
+                <button class="swatch" data-leak="leak_02" title="Fuga 02"><span class="swatch-img"></span><span class="swatch-num">02</span></button>
+                <button class="swatch" data-leak="leak_03" title="Fuga 03"><span class="swatch-img"></span><span class="swatch-num">03</span></button>
+                <button class="swatch" data-leak="leak_04" title="Fuga 04"><span class="swatch-img"></span><span class="swatch-num">04</span></button>
+                <button class="swatch" data-leak="leak_05" title="Fuga 05"><span class="swatch-img"></span><span class="swatch-num">05</span></button>
+                <button class="swatch" data-leak="leak_06" title="Fuga 06"><span class="swatch-img"></span><span class="swatch-num">06</span></button>
+                <button class="swatch" data-leak="leak_07" title="Fuga 07"><span class="swatch-img"></span><span class="swatch-num">07</span></button>
+                <button class="swatch" data-leak="leak_08" title="Fuga 08"><span class="swatch-img"></span><span class="swatch-num">08</span></button>
+                <button class="swatch" data-leak="leak_09" title="Fuga 09"><span class="swatch-img"></span><span class="swatch-num">09</span></button>
+                <button class="swatch" data-leak="leak_10" title="Fuga 10"><span class="swatch-img"></span><span class="swatch-num">10</span></button>
+                <button class="swatch" data-leak="leak_11" title="Fuga 11"><span class="swatch-img"></span><span class="swatch-num">11</span></button>
+                <button class="swatch" data-leak="leak_12" title="Fuga 12"><span class="swatch-img"></span><span class="swatch-num">12</span></button>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Intensidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderLightLeakOpacity" class="macos-slider" min="0" max="100" step="1" value="75"></div>
+                <span id="valLightLeakOpacity" class="slider-value-readout">75</span>
+              </div>
+              <div class="button-row">
+                <button id="btnLeakFlipH" class="btn-subtool" title="Voltear horizontal"><svg class="i"><use href="#i-flip-h"/></svg>Voltear H</button>
+                <button id="btnLeakFlipV" class="btn-subtool" title="Voltear vertical"><svg class="i"><use href="#i-flip-v"/></svg>Voltear V</button>
+                <button id="btnLeakRot" class="btn-subtool" title="Girar 90°"><svg class="i"><use href="#i-rotate-cw"/></svg>Girar</button>
+              </div>
+            </div>
+
+            <!-- Ruido y desgaste -->
+            <div id="sectionDustCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Polvo y desgaste</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="dust" title="Quitar polvo y desgaste" aria-label="Restablecer polvo y desgaste"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar">
+                    <input type="checkbox" id="switchDust">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="control-group-label">Polvo de escáner</div>
+              <div class="swatch-grid">
+                <button class="swatch swatch-none active" data-dirty="none" title="Sin polvo"><span class="swatch-img"><svg class="i"><use href="#i-none"/></svg></span></button>
+                <button class="swatch" data-dirty="dirty_01" title="Polvo 01"><span class="swatch-img"></span><span class="swatch-num">01</span></button>
+                <button class="swatch" data-dirty="dirty_02" title="Polvo 02"><span class="swatch-img"></span><span class="swatch-num">02</span></button>
+                <button class="swatch" data-dirty="dirty_03" title="Polvo 03"><span class="swatch-img"></span><span class="swatch-num">03</span></button>
+                <button class="swatch" data-dirty="dirty_04" title="Polvo 04"><span class="swatch-img"></span><span class="swatch-num">04</span></button>
+                <button class="swatch" data-dirty="dirty_05" title="Polvo 05"><span class="swatch-img"></span><span class="swatch-num">05</span></button>
+                <button class="swatch" data-dirty="dirty_06" title="Polvo 06"><span class="swatch-img"></span><span class="swatch-num">06</span></button>
+                <button class="swatch" data-dirty="dirty_07" title="Polvo 07"><span class="swatch-img"></span><span class="swatch-num">07</span></button>
+                <button class="swatch" data-dirty="dirty_08" title="Polvo 08"><span class="swatch-img"></span><span class="swatch-num">08</span></button>
+                <button class="swatch" data-dirty="dirty_09" title="Polvo 09"><span class="swatch-img"></span><span class="swatch-num">09</span></button>
+                <button class="swatch" data-dirty="dirty_10" title="Polvo 10"><span class="swatch-img"></span><span class="swatch-num">10</span></button>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Intensidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderDirtyNoiseOpacity" class="macos-slider" min="0" max="100" step="1" value="65"></div>
+                <span id="valDirtyNoiseOpacity" class="slider-value-readout">65</span>
+              </div>
+              <div class="button-row">
+                <div class="segmented-control-wrap">
+                  <button id="btnDirtyWhite" class="btn-subtool active" title="Polvo claro de escáner">Claro</button>
+                  <button id="btnDirtyBlack" class="btn-subtool" title="Polvo oscuro">Oscuro</button>
+                </div>
+                <button id="btnDirtyFlipH" class="btn-subtool btn-square" title="Voltear horizontal" aria-label="Voltear horizontal"><svg class="i"><use href="#i-flip-h"/></svg></button>
+                <button id="btnDirtyFlipV" class="btn-subtool btn-square" title="Voltear vertical" aria-label="Voltear vertical"><svg class="i"><use href="#i-flip-v"/></svg></button>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="control-group-label">Rayas y desgaste</div>
+              <div class="swatch-grid">
+                <button class="swatch swatch-none active" data-wear="none" title="Sin desgaste"><span class="swatch-img"><svg class="i"><use href="#i-none"/></svg></span></button>
+                <button class="swatch" data-wear="wear_01" title="Líneas finas"><span class="swatch-img"></span><span class="swatch-num">01</span></button>
+                <button class="swatch" data-wear="wear_02" title="Trama de escáner"><span class="swatch-img"></span><span class="swatch-num">02</span></button>
+                <button class="swatch" data-wear="wear_03" title="Rayas sutiles"><span class="swatch-img"></span><span class="swatch-num">03</span></button>
+                <button class="swatch" data-wear="wear_01_black" title="Químico"><span class="swatch-img"></span><span class="swatch-num">04</span></button>
+                <button class="swatch" data-wear="wear_02_black" title="Retícula"><span class="swatch-img"></span><span class="swatch-num">05</span></button>
+                <button class="swatch" data-wear="wear_03_black" title="Emulsión gastada"><span class="swatch-img"></span><span class="swatch-num">06</span></button>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Intensidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderWearOpacity" class="macos-slider" min="0" max="100" step="1" value="65"></div>
+                <span id="valWearOpacity" class="slider-value-readout">65</span>
+              </div>
+              <div class="button-row">
+                <div class="segmented-control-wrap">
+                  <button id="btnWearLight" class="btn-subtool active" title="Desgaste luminoso">Claro</button>
+                  <button id="btnWearDark" class="btn-subtool" title="Desgaste oscuro">Oscuro</button>
+                </div>
+                <button id="btnWearFlipH" class="btn-subtool btn-square" title="Voltear" aria-label="Voltear desgaste"><svg class="i"><use href="#i-flip-h"/></svg></button>
+                <button id="btnWearRot" class="btn-subtool btn-square" title="Girar 90°" aria-label="Girar desgaste"><svg class="i"><use href="#i-rotate-cw"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Bordes -->
+            <div id="sectionFrameCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Bordes de negativo</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="frame" title="Quitar borde" aria-label="Restablecer borde"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar borde">
+                    <input type="checkbox" id="switchFrame">
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="swatch-grid swatch-grid-frames">
+                <button class="swatch swatch-none active" data-frame="none" title="Sin borde"><span class="swatch-img"><svg class="i"><use href="#i-none"/></svg></span></button>
+                <button class="swatch" data-frame="border_1" title="Fino clásico"><span class="swatch-img"></span><span class="swatch-num">01</span></button>
+                <button class="swatch" data-frame="border_2" title="Cuarto oscuro"><span class="swatch-img"></span><span class="swatch-num">02</span></button>
+                <button class="swatch" data-frame="border_3" title="Papel crema"><span class="swatch-img"></span><span class="swatch-num">03</span></button>
+                <button class="swatch" data-frame="border_4" title="Crema con sombra"><span class="swatch-img"></span><span class="swatch-num">04</span></button>
+                <button class="swatch" data-frame="border_5" title="Doble 6×7"><span class="swatch-img"></span><span class="swatch-num">05</span></button>
+                <button class="swatch" data-frame="border_6" title="Tira de 4 fotos"><span class="swatch-img"></span><span class="swatch-num">06</span></button>
+                <button class="swatch" data-frame="border_7" title="Línea fina"><span class="swatch-img"></span><span class="swatch-num">07</span></button>
+                <button class="swatch" data-frame="border_8" title="Vintage crema"><span class="swatch-img"></span><span class="swatch-num">08</span></button>
+                <button class="swatch" data-frame="border_9" title="Borde quemado"><span class="swatch-img"></span><span class="swatch-num">09</span></button>
+                <button class="swatch" data-frame="border_10" title="Horizontal 35 mm"><span class="swatch-img"></span><span class="swatch-num">10</span></button>
+                <button class="swatch" data-frame="border_11" title="Placa 4×5"><span class="swatch-img"></span><span class="swatch-num">11</span></button>
+                <button class="swatch" data-frame="border_12" title="Marco plata"><span class="swatch-img"></span><span class="swatch-num">12</span></button>
+                <button class="swatch" data-frame="border_13" title="Sombra lateral"><span class="swatch-img"></span><span class="swatch-num">13</span></button>
+                <button class="swatch" data-frame="border_14" title="Bisel óptico"><span class="swatch-img"></span><span class="swatch-num">14</span></button>
+                <button class="swatch" data-frame="border_15" title="Papel lavado"><span class="swatch-img"></span><span class="swatch-num">15</span></button>
+              </div>
+              <div class="button-row">
+                <div class="segmented-control-wrap">
+                  <button class="btn-subtool active" data-framefit="fit" title="Encajar la foto dentro del borde sin recortarla">Encajar</button>
+                  <button class="btn-subtool" data-framefit="overlay" title="Superponer el borde sobre la foto">Superponer</button>
+                </div>
+                <button id="btnFrameRotate" class="btn-subtool btn-square" title="Girar el borde 90°" aria-label="Girar borde"><svg class="i"><use href="#i-rotate-cw"/></svg></button>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Escala</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderFrameWidth" class="macos-slider" min="50" max="150" step="2" value="100"></div>
+                <span id="valFrameWidth" class="slider-value-readout">100</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Opacidad</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderFrameOpacity" class="macos-slider" min="10" max="100" step="1" value="100"></div>
+                <span id="valFrameOpacity" class="slider-value-readout">100</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================ MOVIMIENTO ============================ -->
+          <div class="tab-panel" data-panel="motion">
+            <div id="sectionMotionCard" class="panel-section-card">
+              <div class="section-card-header">
+                <div class="section-card-title">Movimiento editorial</div>
+                <div class="section-card-actions">
+                  <button class="section-reset-btn" data-reset-section="motion" title="Restablecer movimiento" aria-label="Restablecer movimiento"><svg class="i"><use href="#i-reset"/></svg></button>
+                  <label class="macos-switch" title="Activar / desactivar movimiento">
+                    <input type="checkbox" id="switchMotion" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="segmented-control-wrap">
+                <button class="btn-subtool" data-motion="pan" title="Barrido lineal (panning)">Barrido</button>
+                <button class="btn-subtool active" data-motion="shake" title="Trepidación orgánica a pulso">Trepidación</button>
+                <button class="btn-subtool" data-motion="zoom" title="Zoom drag radial">Zoom</button>
+              </div>
+
+              <div class="slider-control-row">
+                <span class="slider-label">Longitud</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderMotionLength" class="macos-slider" min="0" max="100" step="1" value="0"></div>
+                <span id="valMotionLength" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row" id="rowMotionAngle">
+                <span class="slider-label">Ángulo</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderMotionAngle" class="macos-slider" min="0" max="360" step="1" value="0"></div>
+                <span id="valMotionAngle" class="slider-value-readout">0°</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Golpe de flash</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderFlashFreeze" class="macos-slider" min="0" max="100" step="1" value="0"></div>
+                <span id="valFlashFreeze" class="slider-value-readout">0</span>
+              </div>
+              <div class="slider-control-row">
+                <span class="slider-label">Estelas de luz</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderHighlightTrails" class="macos-slider" min="0" max="100" step="1" value="0"></div>
+                <span id="valHighlightTrails" class="slider-value-readout">0</span>
+              </div>
+
+              <div class="divider"></div>
+
+              <button id="btnToggleAnchor" class="btn-subtool btn-wide" title="Mantener nítida una zona (p. ej. la cara) mientras el resto se mueve">
+                <svg class="i"><use href="#i-target"/></svg>
+                <span>Proteger sujeto nítido</span>
+              </button>
+              <div id="anchorControls" class="anchor-controls" style="display: none;">
+                <p class="panel-hint">Haz clic o arrastra sobre la foto para colocar la zona nítida.</p>
+                <div class="slider-control-row">
+                  <span class="slider-label">Radio</span>
+                  <div class="slider-input-wrap"><input type="range" id="sliderAnchorRadius" class="macos-slider" min="5" max="80" step="1" value="25"></div>
+                  <span id="valAnchorRadius" class="slider-value-readout">25</span>
+                </div>
+                <div class="slider-control-row">
+                  <span class="slider-label">Transición</span>
+                  <div class="slider-input-wrap"><input type="range" id="sliderAnchorFeather" class="macos-slider" min="5" max="80" step="1" value="35"></div>
+                  <span id="valAnchorFeather" class="slider-value-readout">35</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================ CARRUSEL ============================ -->
+          <div class="tab-panel" data-panel="carousel">
+            <div id="carouselCtaCard" class="panel-section-card cta-card">
+              <div class="cta-icon"><svg class="i"><use href="#i-carousel"/></svg></div>
+              <div class="cta-title">Carruseles para Instagram</div>
+              <p class="cta-text">Divide una panorámica o combina varias fotos en diapositivas 1:1, 4:5 o 3:4 con plantillas editoriales listas para publicar.</p>
+              <button id="btnCarouselCta" class="btn-primary btn-wide">
+                <svg class="i"><use href="#i-carousel"/></svg>
+                Crear carrusel
+              </button>
+            </div>
+
+            <div id="sectionCarouselCard" class="panel-section-card carousel-section-card" style="display: none;">
+              <div class="section-card-header">
+                <div class="section-card-title">Carrusel</div>
+                <span class="doc-badge-pill" id="badgeActiveTemplate">7 estilos</span>
+              </div>
+
+              <div class="control-group-label">Proporción de cada diapositiva</div>
+              <div class="segmented-control-wrap">
+                <button class="btn-subtool" data-cratio="1:1">1:1</button>
+                <button class="btn-subtool" data-cratio="4:5">4:5</button>
+                <button class="btn-subtool active" data-cratio="3:4">3:4</button>
+              </div>
+
+              <div class="control-group-label">Número de diapositivas</div>
+              <div class="grid-ratio-buttons grid-cols-9">
+                <button class="btn-subtool" data-cslides="2">2</button>
+                <button class="btn-subtool active" data-cslides="3">3</button>
+                <button class="btn-subtool" data-cslides="4">4</button>
+                <button class="btn-subtool" data-cslides="5">5</button>
+                <button class="btn-subtool" data-cslides="6">6</button>
+                <button class="btn-subtool" data-cslides="7">7</button>
+                <button class="btn-subtool" data-cslides="8">8</button>
+                <button class="btn-subtool" data-cslides="9">9</button>
+                <button class="btn-subtool" data-cslides="10">10</button>
+              </div>
+
+              <div class="control-group-label">Composición</div>
+              <div class="segmented-control-wrap">
+                <button class="btn-subtool active" data-cmode="multi" title="Coloca libremente varias fotos, incluso entre dos diapositivas">Lienzo libre</button>
+                <button class="btn-subtool" data-cmode="seamless" title="Una sola foto panorámica repartida entre las diapositivas">Panorámica</button>
+              </div>
+
+              <div class="info-row">
+                <div class="info-row-text">
+                  <span class="info-row-title">Plantilla</span>
+                  <span id="labelCurrentTemplateShort" class="info-row-sub">Modo libre</span>
+                </div>
+                <button id="btnScrollToTemplates" class="link-btn" title="Ver las plantillas editoriales">Ver plantillas</button>
+              </div>
+
+              <div class="toggle-row">
+                <span class="toggle-row-label"><svg class="i"><use href="#i-magnet"/></svg>Guías magnéticas</span>
+                <label class="macos-switch" title="Alinear magnéticamente bordes y centros">
+                  <input type="checkbox" id="switchMagneticSnap" checked>
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+              <div class="slider-control-row" id="rowCarouselPan" style="display: none;">
+                <span class="slider-label">Desplazar</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderCarouselPan" class="macos-slider" min="-100" max="100" step="1" value="0"></div>
+                <span id="valCarouselPan" class="slider-value-readout">0 %</span>
+              </div>
+              <div class="slider-control-row" id="rowCarouselZoom" style="display: none;">
+                <span class="slider-label">Zoom</span>
+                <div class="slider-input-wrap"><input type="range" id="sliderCarouselZoom" class="macos-slider" min="100" max="250" step="1" value="100"></div>
+                <span id="valCarouselZoom" class="slider-value-readout">100 %</span>
+              </div>
+
+              <!-- Foto seleccionada en el carrusel -->
+              <div id="boxCellControls" class="sub-card">
+                <div class="sub-card-head">
+                  <span class="sub-card-title" id="labelActiveCellTitle">Foto seleccionada</span>
+                  <div class="sub-card-actions">
+                    <button id="btnCellBringFront" class="icon-btn icon-btn-sm" title="Traer al frente" aria-label="Traer al frente"><svg class="i"><use href="#i-bring-front"/></svg></button>
+                    <button id="btnCellSendBack" class="icon-btn icon-btn-sm" title="Enviar al fondo" aria-label="Enviar al fondo"><svg class="i"><use href="#i-send-back"/></svg></button>
+                    <button id="btnCellClearPhoto" class="icon-btn icon-btn-sm danger" title="Quitar esta foto del carrusel" aria-label="Quitar foto"><svg class="i"><use href="#i-trash"/></svg></button>
+                  </div>
+                </div>
+
+                <div id="cellSelectorButtons" class="photo-chips-container"></div>
+
+                <button id="btnCellLoadPhoto" class="btn-subtool btn-wide" title="Añadir otra foto al carrusel">
+                  <svg class="i"><use href="#i-plus"/></svg>
+                  <span>Añadir foto al carrusel</span>
+                </button>
+                <input type="file" id="cellFilePicker" style="display: none;" accept="image/*,.tif,.tiff,.dng,.raw,.cr2,.cr3,.nef,.arw,.raf">
+
+                <div id="carouselCropSection" class="carousel-crop-section">
+                  <div class="sub-card-head">
+                    <span class="sub-card-title"><svg class="i"><use href="#i-crop"/></svg>Encuadre de la foto</span>
+                    <span id="badgeCropStatus" class="status-pill">Inactivo</span>
+                  </div>
+                  <button id="btnTogglePhotoCrop" class="btn-subtool btn-wide" title="Activar / confirmar el reencuadre (doble clic sobre la foto)">
+                    <svg class="i"><use href="#i-scissors"/></svg>
+                    <span id="labelTogglePhotoCrop">Reencuadrar dentro del marco</span>
+                  </button>
+                  <div id="cropOptionsRow" class="crop-options">
+                    <div class="segmented-control-wrap">
+                      <button class="btn-subtool btn-photo-crop-ratio active" data-ratio="free">Libre</button>
+                      <button class="btn-subtool btn-photo-crop-ratio" data-ratio="1:1">1:1</button>
+                      <button class="btn-subtool btn-photo-crop-ratio" data-ratio="4:5">4:5</button>
+                      <button class="btn-subtool btn-photo-crop-ratio" data-ratio="3:4">3:4</button>
+                      <button class="btn-subtool btn-photo-crop-ratio" data-ratio="16:9">16:9</button>
+                    </div>
+                    <button id="btnResetPhotoCrop" class="btn-subtool btn-wide" title="Volver al encuadre completo">
+                      <svg class="i"><use href="#i-reset"/></svg>Restablecer encuadre
+                    </button>
+                  </div>
+                </div>
+
+                <div class="control-group-label">Alineado rápido</div>
+                <div class="grid-ratio-buttons grid-cols-2">
+                  <button id="btnSnapBetweenSlides" class="btn-subtool" title="Centrar en el corte entre dos diapositivas">Entre diapositivas</button>
+                  <button id="btnSnapToSlideCenter" class="btn-subtool" title="Centrar en la diapositiva más cercana">Centrar</button>
+                  <button id="btnFitSlideWidth" class="btn-subtool" title="Ajustar al ancho de una diapositiva">Ajustar ancho</button>
+                  <button id="btnCoverSlide" class="btn-subtool" title="Cubrir la diapositiva completa">Cubrir</button>
+                </div>
+
+                <div class="slider-control-row">
+                  <span class="slider-label">Escala</span>
+                  <div class="slider-input-wrap"><input type="range" id="sliderCellZoom" class="macos-slider" min="20" max="350" step="1" value="100"></div>
+                  <span id="valCellZoom" class="slider-value-readout">100 %</span>
+                </div>
+                <div class="slider-control-row">
+                  <span class="slider-label">Posición X</span>
+                  <div class="slider-input-wrap"><input type="range" id="sliderCellPanX" class="macos-slider" min="0" max="6000" step="5" value="600"></div>
+                  <span id="valCellPanX" class="slider-value-readout">600 px</span>
+                </div>
+                <div class="slider-control-row">
+                  <span class="slider-label">Posición Y</span>
+                  <div class="slider-input-wrap"><input type="range" id="sliderCellPanY" class="macos-slider" min="0" max="2700" step="5" value="600"></div>
+                  <span id="valCellPanY" class="slider-value-readout">600 px</span>
+                </div>
+
+                <div class="grid-ratio-buttons grid-cols-3">
+                  <button id="btnCellReset" class="btn-subtool" title="Restablecer posición y escala"><svg class="i"><use href="#i-reset"/></svg>Restablecer</button>
+                  <button id="btnCellRotateCCW" class="btn-subtool" title="Girar 90° a la izquierda"><svg class="i"><use href="#i-rotate-ccw"/></svg>90°</button>
+                  <button id="btnCellRotateCW" class="btn-subtool" title="Girar 90° a la derecha"><svg class="i"><use href="#i-rotate-cw"/></svg>90°</button>
+                </div>
+              </div>
+
+              <button id="btnExportCarouselSlices" class="btn-primary btn-wide">
+                <svg class="i"><use href="#i-download"/></svg>
+                <span id="btnExportCarouselLabel">Exportar 3 diapositivas</span>
+              </button>
+              <button id="btnExitCarousel" class="btn-subtool btn-wide">Salir del modo carrusel</button>
+            </div>
+
+            <!-- Plantillas -->
+            <div id="sectionCarouselTemplatesCard" class="panel-section-card carousel-templates-card" style="display: none;">
+              <div class="section-card-header">
+                <div class="section-card-title">Plantillas editoriales</div>
+              </div>
+              <p class="panel-hint">Elige una plantilla y haz clic en un marco o arrastra una foto desde el carrete para encajarla.</p>
+
+              <div class="button-row">
+                <button id="btnAutoFillTemplate" class="btn-subtool btn-accent btn-grow" title="Colocar tus fotos en los huecos vacíos">
+                  <svg class="i"><use href="#i-sparkles"/></svg>Auto-rellenar
+                </button>
+                <button id="btnClearTemplateSlots" class="btn-subtool" title="Vaciar todos los huecos">
+                  <svg class="i"><use href="#i-reset"/></svg>Vaciar
+                </button>
+              </div>
+
+              <div id="templateSlotsStatus" class="status-box">Modo libre (elige una plantilla)</div>
+
+              <div class="carousel-templates-grid">
+                <div class="template-card" data-template="carousel_1">
+                  <div class="template-card-header">
+                    <span class="template-num">1</span>
+                    <span class="template-title">Editorial romántico</span>
+                    <span class="template-pill">10 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_1" width="250" height="44"></canvas>
+                  <div class="template-card-desc">Columpio, díptico vertical, banquete panorámico, bosque, flat-lay, novia con flor y vestido colgado.</div>
+                </div>
+                <div class="template-card" data-template="carousel_2">
+                  <div class="template-card-header">
+                    <span class="template-num">2</span>
+                    <span class="template-title">Cover &amp; Ribbon</span>
+                    <span class="template-pill">10 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_2" width="250" height="44"></canvas>
+                  <div class="template-card-desc">Portada en paspartú, panorámica con zapatos superpuestos, detalle de velo, díptico y collage de 4.</div>
+                </div>
+                <div class="template-card" data-template="carousel_3">
+                  <div class="template-card-header">
+                    <span class="template-num">3</span>
+                    <span class="template-title">Gran altar &amp; escalera</span>
+                    <span class="template-pill">10 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_3" width="250" height="44"></canvas>
+                  <div class="template-card-desc">Pórtico con fondo superpuesto, escalera con inserto, fachada de hiedra, gran altar floral, díptico y tríptico.</div>
+                </div>
+                <div class="template-card" data-template="carousel_4">
+                  <div class="template-card-header">
+                    <span class="template-num">4</span>
+                    <span class="template-title">Boda editorial · parte 1</span>
+                    <span class="template-pill">5 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_4" width="250" height="52"></canvas>
+                  <div class="template-card-desc">Portada en paspartú, retrato sobre madera con detalle floral, puente entre 3 y 4 y fachada de hiedra.</div>
+                </div>
+                <div class="template-card" data-template="carousel_5">
+                  <div class="template-card-header">
+                    <span class="template-num">5</span>
+                    <span class="template-title">Fine art &amp; tríptico · parte 2</span>
+                    <span class="template-pill">5 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_5" width="250" height="52"></canvas>
+                  <div class="template-card-desc">Flat-lay de anillos, paseo en la playa, collage con marco negro, retrato cruzado y pareja de fondo.</div>
+                </div>
+                <div class="template-card" data-template="carousel_4_5_full">
+                  <div class="template-card-header">
+                    <span class="template-num">4+5</span>
+                    <span class="template-title">Serie editorial completa</span>
+                    <span class="template-pill">10 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_4_5_full" width="250" height="44"></canvas>
+                  <div class="template-card-desc">Las plantillas 4 y 5 unidas en un carrusel continuo de 10 diapositivas (17 marcos).</div>
+                </div>
+                <div class="template-card" data-template="carousel_6">
+                  <div class="template-card-header">
+                    <span class="template-num">6</span>
+                    <span class="template-title">Storytelling &amp; collage</span>
+                    <span class="template-pill">10 · 4:5</span>
+                  </div>
+                  <canvas class="template-mini-canvas" data-template-canvas="carousel_6" width="250" height="44"></canvas>
+                  <div class="template-card-desc">Puerta barroca, flat-lay sobre seda, cuadrícula de 4, ceremonia panorámica, escalera y mosaico 3×3.</div>
+                </div>
+                <div class="template-card active" data-template="free">
+                  <div class="template-card-header">
+                    <span class="template-num"><svg class="i"><use href="#i-grid"/></svg></span>
+                    <span class="template-title">Modo libre</span>
+                    <span class="template-pill">Libre</span>
+                  </div>
+                  <div class="template-card-desc">Composición desde cero: coloca, escala y encuadra tus fotos a tu gusto.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie del panel -->
+        <div class="sidebar-footer">
+          <button id="btnCopySettings" class="btn-pill-action" title="Copiar los ajustes de esta foto (⇧⌘C)">
+            <svg class="i"><use href="#i-copy"/></svg><span>Copiar</span>
+          </button>
+          <button id="btnPasteSettings" class="btn-pill-action" title="Pegar ajustes copiados (⇧⌘V)" disabled>
+            <svg class="i"><use href="#i-paste"/></svg><span>Pegar</span>
+          </button>
+          <button id="btnSyncAll" class="btn-pill-action" title="Aplicar los ajustes de esta foto a todas las del proyecto" hidden>
+            <svg class="i"><use href="#i-layers"/></svg><span>A todas</span>
+          </button>
+          <span class="footer-spacer"></span>
+          <button id="btnResetAll" class="btn-pill-action btn-icon-only" title="Restablecer todos los ajustes de esta foto" aria-label="Restablecer todos los ajustes">
+            <svg class="i"><use href="#i-reset"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Barra de navegación inferior en móvil -->
+      <nav id="mobileBottomNav" class="mobile-bottom-nav">
+        <button id="btnMobileNavPhotos" class="mobile-nav-btn" title="Fotos del proyecto">
+          <svg class="i"><use href="#i-image"/></svg><span>Fotos</span>
+        </button>
+        <button id="btnMobileNavAdjust" class="mobile-nav-btn" data-mobile-tab="develop" title="Revelar">
+          <svg class="i"><use href="#i-sliders"/></svg><span>Revelar</span>
+        </button>
+        <button id="btnMobileNavCrop" class="mobile-nav-btn" data-mobile-tab="crop" title="Recorte">
+          <svg class="i"><use href="#i-crop"/></svg><span>Recorte</span>
+        </button>
+        <button id="btnMobileNavAnalog" class="mobile-nav-btn" data-mobile-tab="film" title="Película">
+          <svg class="i"><use href="#i-film"/></svg><span>Película</span>
+        </button>
+        <button id="btnMobileNavTemplates" class="mobile-nav-btn" data-mobile-tab="carousel" title="Carrusel">
+          <svg class="i"><use href="#i-carousel"/></svg><span>Carrusel</span>
+        </button>
+      </nav>
+    </main>
+
+    <!-- =================================================================
+         4. DIÁLOGO DE EXPORTACIÓN
+         ================================================================= -->
+    <div id="exportModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="exportModalTitle">Exportar</div>
+          <button id="btnCloseExportModal" class="icon-btn" title="Cerrar (Esc)" aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-group">
+            <label class="modal-group-title" for="exportResSelect">Tamaño</label>
+            <select id="exportResSelect" class="modal-select">
+              <option value="original" selected>Original (100 %)</option>
+              <option value="ig">Instagram (1080 px de ancho)</option>
+              <option value="4k">4K (lado largo 3840 px)</option>
+              <option value="2k">Web (lado largo 2048 px)</option>
+              <option value="75">75 %</option>
+              <option value="50">50 %</option>
+              <option value="150">150 % (ampliación para impresión)</option>
+            </select>
+          </div>
+
+          <div class="modal-group">
+            <label class="modal-group-title">Formato</label>
+            <div class="segmented-control-wrap format-seg" role="radiogroup">
+              <button class="btn-subtool active" data-export-format="jpeg" role="radio" aria-checked="true">JPEG</button>
+              <button class="btn-subtool" data-export-format="png" role="radio" aria-checked="false">PNG</button>
+              <button class="btn-subtool" data-export-format="tiff" role="radio" aria-checked="false">TIFF</button>
+            </div>
+            <select id="exportFormatSelect" class="modal-select" hidden>
+              <option value="jpeg" selected>JPEG</option>
+              <option value="png">PNG</option>
+              <option value="tiff">TIFF</option>
+            </select>
+          </div>
+
+          <div id="exportJpegQualityBox" class="slider-control-row">
+            <span class="slider-label">Calidad JPEG</span>
+            <div class="slider-input-wrap"><input type="range" id="sliderExportJpegQuality" class="macos-slider" min="60" max="100" step="1" value="100"></div>
+            <span id="valExportJpegQuality" class="slider-value-readout">100%</span>
+          </div>
+
+          <label id="exportAllRow" class="checkbox-row" hidden>
+            <input type="checkbox" id="exportAllToggle">
+            <span>Exportar las <b id="exportAllCount">0</b> fotos del proyecto con sus ajustes</span>
+          </label>
+
+          <div class="export-summary-box">
+            <div class="summary-line"><span>Resolución</span><strong><span id="summaryExportDimensions">0 × 0 px</span> · <span id="summaryExportMP">0.0 MP</span></strong></div>
+            <div class="summary-line"><span>Escala</span><strong id="summaryExportQuality">100 %</strong></div>
+            <div class="summary-line"><span>Formato</span><strong id="summaryExportFormat">JPEG</strong></div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btnCancelExport" class="btn-pill-action">Cancelar</button>
+          <button id="btnConfirmExport" class="btn-export-pill">
+            <svg class="i"><use href="#i-download"/></svg>
+            <span id="labelConfirmExport">Descargar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================
+         5. DIÁLOGO DEL IPAD
+         ================================================================= -->
+    <div id="ipadModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="ipadModalTitle">
+      <div class="modal-dialog ipad-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="ipadModalTitle">Abrir en el iPad</div>
+          <button id="btnCloseIpadModal" class="icon-btn" title="Cerrar (Esc)" aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button>
+        </div>
+
+        <div class="modal-body ipad-modal-body">
+          <div class="ipad-connect-hero">
+            <div class="ipad-qr-wrapper">
+              <canvas id="ipadQrCanvas" width="180" height="180" class="ipad-qr-canvas"></canvas>
+              <div class="ipad-qr-badge">Escanéalo con la cámara</div>
+            </div>
+            <div class="ipad-url-info">
+              <label class="modal-group-title">Dirección en tu red</label>
+              <div class="ipad-url-box">
+                <input type="text" id="ipadLanUrlInput" class="ipad-url-field" readonly value="">
+                <button id="btnCopyIpadUrl" class="btn-pill-action" title="Copiar">Copiar</button>
+              </div>
+              <label class="modal-group-title">Nombre del Mac (Bonjour)</label>
+              <div class="ipad-url-box">
+                <input type="text" id="ipadBonjourUrlInput" class="ipad-url-field" readonly value="">
+                <button id="btnCopyBonjourUrl" class="btn-pill-action" title="Copiar">Copiar</button>
+              </div>
+              <p class="ipad-subtext">El Mac y el iPad deben estar en la misma red Wi‑Fi y mucho FILM abierto en el Mac.</p>
+            </div>
+          </div>
+
+          <ol class="ipad-steps-container">
+            <li class="ipad-step-item"><span class="ipad-step-num">1</span><div>Escanea el código con la <strong>cámara del iPad</strong> (o escribe la dirección en Safari).</div></li>
+            <li class="ipad-step-item"><span class="ipad-step-num">2</span><div>En Safari, toca <strong>Compartir</strong> y luego <strong>«Añadir a pantalla de inicio»</strong>.</div></li>
+            <li class="ipad-step-item"><span class="ipad-step-num">3</span><div>Ábrelo desde el icono para usarlo a pantalla completa con gestos y Apple Pencil.</div></li>
+          </ol>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btnCloseIpadModalBtn" class="btn-pill-action">Cerrar</button>
+          <a id="btnOpenInBrowserLan" href="#" target="_blank" rel="noopener" class="btn-export-pill">Abrir en el navegador</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================
+         6. DIÁLOGO DE ATAJOS DE TECLADO
+         ================================================================= -->
+    <div id="shortcutsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
+      <div class="modal-dialog shortcuts-dialog">
+        <div class="modal-header">
+          <div class="modal-title" id="shortcutsModalTitle">Atajos de teclado</div>
+          <button id="btnCloseShortcuts" class="icon-btn" title="Cerrar (Esc)" aria-label="Cerrar"><svg class="i"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="modal-body shortcuts-body">
+          <div class="shortcut-group">
+            <div class="shortcut-group-title">General</div>
+            <div class="shortcut"><span>Abrir fotos</span><span><kbd>⌘</kbd><kbd>O</kbd></span></div>
+            <div class="shortcut"><span>Exportar</span><span><kbd>⌘</kbd><kbd>E</kbd></span></div>
+            <div class="shortcut"><span>Deshacer / Rehacer</span><span><kbd>⌘</kbd><kbd>Z</kbd> · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>Z</kbd></span></div>
+            <div class="shortcut"><span>Pegar foto</span><span><kbd>⌘</kbd><kbd>V</kbd></span></div>
+            <div class="shortcut"><span>Foto anterior / siguiente</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
+            <div class="shortcut"><span>Esta ayuda</span><span><kbd>?</kbd></span></div>
+          </div>
+          <div class="shortcut-group">
+            <div class="shortcut-group-title">Vista</div>
+            <div class="shortcut"><span>Ajustar a la pantalla</span><span><kbd>Z</kbd></span></div>
+            <div class="shortcut"><span>Acercar / alejar</span><span><kbd>⌘</kbd><kbd>+</kbd> · <kbd>⌘</kbd><kbd>−</kbd></span></div>
+            <div class="shortcut"><span>Ver original (mantener)</span><span><kbd>\</kbd></span></div>
+            <div class="shortcut"><span>Comparar antes / después</span><span><kbd>Y</kbd></span></div>
+          </div>
+          <div class="shortcut-group">
+            <div class="shortcut-group-title">Edición</div>
+            <div class="shortcut"><span>Pestañas del panel</span><span><kbd>1</kbd>–<kbd>5</kbd></span></div>
+            <div class="shortcut"><span>Recortar</span><span><kbd>C</kbd></span></div>
+            <div class="shortcut"><span>Confirmar / salir del recorte</span><span><kbd>Intro</kbd> · <kbd>Esc</kbd></span></div>
+            <div class="shortcut"><span>Copiar / pegar ajustes</span><span><kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> · <kbd>⇧</kbd><kbd>⌘</kbd><kbd>V</kbd></span></div>
+            <div class="shortcut"><span>Valor inicial de un control</span><span>doble clic</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aviso -->
+    <div id="toastMsg" class="toast-msg" role="status" aria-live="polite">
+      <span class="toast-text"></span>
+      <button type="button" class="toast-action" hidden></button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS (el paquete de texturas js/analog-assets.js se carga en segundo plano desde app.js) -->
+  <script src="js/tiff-codec.js"></script>
+  <script src="js/shaders.js"></script>
+  <script src="js/frames.js"></script>
+  <script src="js/carousel.js"></script>
+  <script src="js/qrcode.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
